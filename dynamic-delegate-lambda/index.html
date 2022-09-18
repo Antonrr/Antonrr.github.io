@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Anton Rassadin, Unreal Engine and C&#43;&#43; developer">
+    
+    <link rel="shortcut icon" href="https://rassadin.net/favicon.ico">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTS8ZK50NM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CTS8ZK50NM');
+    </script>
+
+    
+    <link rel="stylesheet" href="/css/style.min.css">
+
+    <link rel="canonical" href="https://rassadin.net/dynamic-delegate-lambda/" />    
+    <title>Anton Rassadin — How to bind lambda to an Unreal Engine dynamic delegate</title>
+</head><body><header id="banner">
+    <h2><a href="https://rassadin.net">Anton Rassadin</a></h2>
+    <nav>
+        <ul>
+            <li>
+                <a href="/projects/" title="projects">projects</a>
+            </li><li>
+                <a href="/posts/" title="posts">posts</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main id="content">
+<article>
+    <header id="post-header">
+        <h1>How to bind lambda to an Unreal Engine dynamic delegate</h1>
+        <div>
+                <time>September 18, 2022</time>
+            </div>
+    </header><p>Unreal Engine delegates can be of several types:</p>
+<ul>
+<li>Single</li>
+<li>Multicast</li>
+<li>Dynamic single</li>
+<li>Dynamic multicast</li>
+</ul>
+<p>One of the key differences between dynamic and non-dynamic delegate types is that dynamic delegates can be used in blueprints.</p>
+<p>You can bind a function or a lambda to a non-dynamic delegate using one of the <code>Bind*</code>, <code>Create*</code> or <code>Add*</code> functions: <code>CreateLambda</code>, <code>CreateUFunction</code>, <code>CreateUObject</code>, <code>BindLambda</code>, <code>BindUFunction</code>, <code>BindUObject</code>, <code>AddLambda</code>, <code>AddUFunction</code>, <code>AddUObject</code> and so on.</p>
+<p>You can bind a function of an <code>UObject</code> to a dynamic delegate using <code>AddDynamic</code> or <code>AddUniqueDynamic</code>. Notice how there is no method provided to bind a lambda to a dynamic delegate. This is because of the way dynamic delegate manages its invocation list internally: it relies on Unreal Engine reflection system in runtime.</p>
+<p>However, it would be possible if we proxied calls to our lambda through some UObject. This is exactly (plus necessary inner workings) what Andrew Derkach&rsquo;s <a href="https://github.com/Umkerius/DynamicLambda">Dynamic Lambda</a> does. This project is in the development stage, but it already can serve as proof of concept and inspire future improvements on this front.</p>
+<p><code>DynamicLambda</code> provides a simple syntax for binding a lambda to a dynamic delegate:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// Short subscription form is preferred
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Test</span><span class="o">-&gt;</span><span class="n">SimpleTestDelegate</span> <span class="o">+=</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">]{</span> <span class="n">DoSomeStuff</span><span class="p">();</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// To bind &#39;weak&#39; lambda use &#39;tuple&#39; syntax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Test</span><span class="o">-&gt;</span><span class="n">SimpleTestDelegate</span> <span class="o">+=</span> <span class="p">(</span><span class="n">MyObjectPtr</span><span class="p">,</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">]{</span> <span class="n">DoSomeStuff</span><span class="p">();</span> <span class="p">});</span></span></span></code></pre></div>
+<p>Try it out!</p>
+</article>
+
+        </main><footer id="footer">
+    
+</footer>
+</body>
+</html>
