@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="How to control and avoid unnecessary memory reallocation when using TArray container">
+    
+    <link rel="shortcut icon" href="https://rassadin.net/favicon.ico">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTS8ZK50NM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CTS8ZK50NM');
+    </script>
+
+    
+    <link rel="stylesheet" href="/css/style.min.css">
+
+    <link rel="canonical" href="https://rassadin.net/unreal-array-reallocation/" />    
+    <title>Anton Rassadin — Avoiding array reallocations in Unreal Engine</title>
+</head><body><header id="banner">
+    <h2><a href="https://rassadin.net">Anton Rassadin</a></h2>
+    <nav>
+        <ul>
+            <li>
+                <a href="/projects/" title="projects">projects</a>
+            </li><li>
+                <a href="/posts/" title="posts">posts</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main id="content">
+<article>
+    <header id="post-header">
+        <h1>Avoiding array reallocations in Unreal Engine</h1>
+        <div>
+                <time>October 30, 2022</time>
+            </div>
+    </header><p>In Unreal Engine, <code>TArray</code> is a dynamically sized array of elements. TArray grows and reallocates memory according to an allocation policy as elements are added to it. With each reallocation, it must copy all the elements to the new memory and delete the old memory. Depending on how hot the code path is, this can have a performance impact on your project.</p>
+<h2 id="using-tarray-efficiently">Using TArray efficiently</h2>
+<h3 id="controlling-reallocations-during-adding-and-deleting-elements">Controlling reallocations during adding and deleting elements</h3>
+<p>One way to avoid memory reallocations during adding new elements is to reserve all the needed memory upfront. You can do it using the <code>TArray::Reserve</code> method.</p>
+<p>TArray also reallocates its elements as you remove elements from anywhere but from the end of the array. To avoid shifting all consecutive elements after removing an element there&rsquo;s a <code>TArray::RemoveAtSwap</code> method.</p>
+<h3 id="inline-allocator">Inline allocator</h3>
+<p>TArray default mode of operation is allocating memory for its elements in the heap. Although fine for most applications, this can be not ideal in some cases. Luckily we can specify a custom allocator during TArray construction, and <code>TInlineAllocator</code> is just what is needed. The inline allocator allocates up to a specified number of elements in the same allocation as the container, for example on the stack, and has a safe mode for allocations beyond that limit, moving all the elements to an indirect allocation. <code>TInlineAllocator</code> takes two template parameters: the number of elements and a secondary allocator, defaulting to heap allocator. Usage is quite simple:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// Allocating an inline array with up to 16 elements
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">TArray</span><span class="o">&lt;</span><span class="n">FExampleStruct</span><span class="p">,</span> <span class="n">TInlineAllocator</span><span class="o">&lt;</span><span class="mi">16</span><span class="o">&gt;&gt;</span> <span class="n">ExampleInlineArray</span><span class="p">;</span></span></span></code></pre></div>
+<h2 id="using-additional-array-like-containers">Using additional array-like containers</h2>
+<p>Unreal Engine containers library provides a host of both general-purpose and highly specialized containers. This is a game engine after all. To keep the scope of this post narrow, I will only list containers that address reallocation particularly.</p>
+<h3 id="tindirectarray">TIndirectArray</h3>
+<p><code>TIndirectArray</code> is a container similar to <code>TArray</code> with the only difference in that the former stores pointers to its elements. In the case of reallocation, an indirect array reallocates only its internal element pointers storage, leaving actual elements as is.</p>
+<h3 id="tchunkedarray">TChunkedArray</h3>
+<p><code>TChunkedArray</code> is a bit more interesting. As you might expect from a chunked array, it stores its elements in chunks of memory. This has two consequences. Firstly, as new elements are added to a chunked array, only new chunks are added, and old ones are never reallocated. Secondly, with chunks of size small enough you can mitigate possible allocation failures due to memory fragmentation.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>If the results of your profiling sessions suggest that your code may spend a significant amount of time reallocating arrays, there are quite a few ways to get around it. Unreal Engine provides a wide selection of tools to efficiently use memory and CPU time.</p>
+</article>
+
+        </main><footer id="footer">
+    
+</footer>
+</body>
+</html>
