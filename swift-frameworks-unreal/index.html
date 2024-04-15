@@ -38,7 +38,7 @@
     <header id="post-header">
         <h1>Linking Swift frameworks to an Unreal Engine project</h1>
         <div>
-                <time>September 8, 2022</time>
+                <time>Updated April 15, 2024</time>
             </div>
     </header><p>It&rsquo;s very rare to find an app without the usage of third-party SDKs. Whether you are working on a casual puzzle or an open-world adventure, there&rsquo;s a point in the project development cycle when you have to rely on some other peoples&rsquo; code doing things for you: collecting and sending crash log data, collecting in-game metrics, helping with monetization, and so on.</p>
 <p>Third-party SDKs on iOS are usually distributed in the form of a framework. A framework is either a static or a dynamic library, corresponding headers, module descriptions, and an optional resource bundle.</p>
@@ -72,8 +72,19 @@ Thread 0 Crashed:
       cmdsize 40
          path @executable_path/Frameworks (offset 12)
 </code></pre><p>You can manipulate Runpaths using <code>install_name_tool</code>.</p>
-<h4 id="fixing-the-crash">Fixing the crash</h4>
-<p>To fix the crash, you should put the library into the <code>Frameworks</code> directory in the bundle. Do this by adding <code>copyDir</code> node to UPL file:</p>
+<h3 id="fixing-the-crash">Fixing the crash</h3>
+<h4 id="update-unreal-engine-5-solution">Update: Unreal Engine 5 solution</h4>
+<p>Unreal Engine 5 has improved the situation by adding an option to copy frameworks into the app bundle: <code>bCopyFramework</code> field of the <code>UnrealBuildTool::ModuleRules::Framework</code> class. Simply set the value of this field to <code>true</code> when setting up the framework in your plugin <code>Build.cs</code> file:</p>
+<pre tabindex="0"><code>PublicAdditionalFrameworks.Add(
+   new Framework(
+      &#34;swift_framework_dynamic&#34;,
+      &#34;swift_framework_dynamic.embeddedframework.zip&#34;,
+      null,
+      true // bCopyFramework
+   )
+);
+</code></pre><h4 id="unreal-engine-4-solution">Unreal Engine 4 solution</h4>
+<p>To fix the crash, you should put the framework into the <code>Frameworks</code> directory in the app bundle. Do this by adding <code>copyDir</code> node to UPL file:</p>
 <pre tabindex="0"><code>&lt;copyDir src=&#34;$S(EngineDir)/Intermediate/UnzippedFrameworks/swift_framework_dynamic/swift_framework_dynamic.embeddedframework/swift_framework_dynamic.framework&#34; dst=&#34;$S(BuildDir)/Frameworks/swift_framework_dynamic.framework&#34; /&gt;
 </code></pre><h3 id="linker-error-could-not-find-or-use-auto-linked-library-when-using-swift-static-library">Linker error &ldquo;Could not find or use auto-linked library&rdquo; when using Swift static library</h3>
 <p>When you add a static framework containing Swift classes to an Unreal Engine project, you have to tell the linker where it should look for Swift libraries. In Xcode this is &ldquo;Library Search Paths&rdquo; setting in the Build Settings of a target.</p>
