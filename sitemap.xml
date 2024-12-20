@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rassadin.net/</loc>
-    <lastmod>2024-12-04T12:30:00+03:00</lastmod>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://rassadin.net/posts/</loc>
     <lastmod>2024-12-04T12:30:00+03:00</lastmod>
@@ -13,6 +13,12 @@
   </url><url>
     <loc>https://rassadin.net/modernized-xcode-ios-icons-xcassets/</loc>
     <lastmod>2024-12-04T12:30:00+03:00</lastmod>
+  </url><url>
+    <loc>https://rassadin.net/projects/</loc>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://rassadin.net/projects/survive-the-wave/</loc>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://rassadin.net/android-external-storage-access/</loc>
     <lastmod>2024-05-20T19:00:00+03:00</lastmod>
@@ -29,11 +35,14 @@
     <loc>https://rassadin.net/unreal-ios-auto-signing/</loc>
     <lastmod>2022-08-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://rassadin.net/projects/merge-master/</loc>
-    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+    <loc>https://rassadin.net/projects/mergic-academy/</loc>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://rassadin.net/projects/</loc>
-    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+    <loc>https://rassadin.net/projects/merge-master/</loc>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://rassadin.net/projects/master-of-orcs-and-robots/</loc>
+    <lastmod>2024-12-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://rassadin.net/projects/armored-warfare-assault/</loc>
     <lastmod>2022-02-13T00:00:00+00:00</lastmod>
