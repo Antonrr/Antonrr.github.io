@@ -1,86 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en-US">
+  <head>
+    <title>https://rassadin.net/posts/unreal-ios-auto-signing/</title>
+    <link rel="canonical" href="https://rassadin.net/posts/unreal-ios-auto-signing/">
+    <meta name="robots" content="noindex">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="How to run Unreal Engine project on an iOS device without being a member of the Apple Developer Program">
-    
-    <link rel="shortcut icon" href="https://rassadin.net/favicon.ico">
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTS8ZK50NM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-CTS8ZK50NM');
-    </script>
-
-    
-    <link rel="stylesheet" href="/css/style.min.css">
-
-    <link rel="canonical" href="https://rassadin.net/unreal-ios-auto-signing/" />    
-    <title>Anton Rassadin — How to run Unreal Engine project on an iOS device using automatic signing</title>
-</head>
-<body><header id="banner">
-    <h2><a href="https://rassadin.net/">Anton Rassadin</a></h2>
-    <nav>
-        <ul>
-            <li>
-                <a href="/posts/" title="posts">posts</a>
-            </li><li>
-                <a href="/projects/" title="projects">projects</a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main id="content">
-<article>
-    <header id="post-header">
-        <h1>How to run Unreal Engine project on an iOS device using automatic signing</h1>
-        <div>
-                <time>August 26, 2022</time>
-            </div>
-    </header><p>Any app running on an iOS device needs to be signed by a developer with a valid certificate from Apple. Code signing is a mechanism that confirms the author of the code and ensures that the code hasn&rsquo;t been altered or corrupted since it was signed. To upload your app to the App Store or to test it within your company, you need an active Apple Developer Program membership.</p>
-<p>If you want to run your Unreal Engine project on your iOS device and you aren&rsquo;t a member of the Apple Developer Program yet, you still can do it with help of Xcode automatic signing feature! In this post, I will guide you through the process of creating of certificate and setting up the Unreal Engine project.</p>
-<p>Firstly, connect your device and create an iOS app project.</p>
-<figure><img src="/images/posts/ios-automatic-signing/create-project.png"
-    alt="Xcode new project popup">
-</figure>
-
-<p>Set bundle identifier to the desired value.</p>
-<figure><img src="/images/posts/ios-automatic-signing/new-project-options.png"
-    alt="New project options popup">
-</figure>
-
-<p>Select your device in the toolbar, then select your project and target and open the &ldquo;Signing &amp; Capabilities&rdquo; tab. Then set the &ldquo;Automatically manage signing&rdquo; checkbox, select &ldquo;Personal team&rdquo; as a Team, and check that the bundle identifier matches what you have set earlier. At this point, Xcode may ask you to log in with your Apple ID.</p>
-<figure><img src="/images/posts/ios-automatic-signing/signing-settings.png"
-    alt="Signing &amp; Capabilities settings">
-</figure>
-
-<p>Xcode will generate a short-living provisioning profile with your device added to it and a development certificate. Provisioning profiles are stored in <code>~/Library/MobileDevice/Provisioning Profiles</code>. Navigate there and find the newly generated profile. Write down team identifier — 10 symbols alphanumeric ID — as you will need it later.</p>
-<figure><img src="/images/posts/ios-automatic-signing/provisioning-profile.png"
-    alt="Provisioning profile details">
-</figure>
-
-<p>Your new development certificate is already in Keychain Access.</p>
-<figure><img src="/images/posts/ios-automatic-signing/keychain.png"
-    alt="Keychain Access with certificate selected">
-</figure>
-
-<p>Now launch Unreal Editor and navigate to <code>Platforms→iOS</code> in <code>Project settings</code>. Set the &ldquo;Automatic Signing&rdquo; checkbox, fill your team identifier in the &ldquo;IOS Team ID&rdquo; textbox, and disable &ldquo;Remote notifications support&rdquo; as automatically generated provisioning profiles don&rsquo;t support this capability</p>
-<figure><img src="/images/posts/ios-automatic-signing/ue-project-settings.png"
-    alt="Unreal Engine Project settings window">
-</figure>
-
-<p>Now you can package your project and run it on the device. Congratulations!</p>
-<figure><img src="/images/posts/ios-automatic-signing/package.png"
-    alt="Unreal Engine package for iOS command">
-</figure>
-
-</article>
-
-        </main><footer id="footer">
-    
-</footer>
-</body>
+    <meta http-equiv="refresh" content="0; url=https://rassadin.net/posts/unreal-ios-auto-signing/">
+  </head>
 </html>

@@ -1,82 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en-US">
+  <head>
+    <title>https://rassadin.net/posts/android-external-storage-access/</title>
+    <link rel="canonical" href="https://rassadin.net/posts/android-external-storage-access/">
+    <meta name="robots" content="noindex">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="How to fix save games not working on Android 10 and higher when making a debug build in Unreal Engine">
-    
-    <link rel="shortcut icon" href="https://rassadin.net/favicon.ico">
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTS8ZK50NM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-CTS8ZK50NM');
-    </script>
-
-    
-    <link rel="stylesheet" href="/css/style.min.css">
-
-    <link rel="canonical" href="https://rassadin.net/android-external-storage-access/" />    
-    <title>Anton Rassadin — Using scoped storage in debug Unreal Engine builds on Android API 29&#43;</title>
-</head>
-<body><header id="banner">
-    <h2><a href="https://rassadin.net/">Anton Rassadin</a></h2>
-    <nav>
-        <ul>
-            <li>
-                <a href="/posts/" title="posts">posts</a>
-            </li><li>
-                <a href="/projects/" title="projects">projects</a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main id="content">
-<article>
-    <header id="post-header">
-        <h1>Using scoped storage in debug Unreal Engine builds on Android API 29&#43;</h1>
-        <div>
-                <time>Updated May 20, 2024</time>
-            </div>
-    </header><p>Android API 29 (Android 10) introduced the concept of scoped storage. And even more, apps targeting Android API 30 (Android 11 or higher) cannot opt out of scoped storage. Scoped storage limits app access to external storage. With scoped storage, the application can only access its own files in a restricted directory on external storage. It cannot read from or write to arbitrary places.</p>
-<p>It can be a problem if you are making a debug build with the &ldquo;for distribution&rdquo; checkbox off. The thing is, in this case, Unreal Engine behaves differently with regard to the &ldquo;Use ExternalFilesDir for UE4Game files&rdquo; (<code>bUseExternalFilesDir</code>) setting. In distribution builds Unreal Engine stores game files in a directory obtained from <a href="https://developer.android.com/reference/android/content/Context#getFilesDir()"><code>getFilesDir()</code></a> or <a href="https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)"><code>getExternalFilesDir()</code></a>. In contrast, in a non-distribution build Unreal Engine uses the directory returned from <a href="https://developer.android.com/reference/android/os/Environment#getExternalStorageDirectory()"><code>getExternalStorageDirectory()</code></a>, which is top-level and thus is not intended for direct usage by applications. This directory is not an ideal place for storing game files.</p>
-<p>There are several ways around this. If our game is targeting Android API 29, we can opt out of scoped storage for this particular debug build. If our game built for Android API 30, in principle we could give our app all-files access to storage by requesting <code>MANAGE_EXTERNAL_STORAGE</code> permission. Both these solutions are quite crude workarounds in a way they don&rsquo;t fix the problem, they just fix the symptoms. What we want to do is tell Unreal Engine not to store savegames and other data in the root of external storage.</p>
-<p>The first thing that comes to mind is to alter the code that decides where to put savegames on disk. This is a quick and easy fix. Let&rsquo;s try this by editing the <code>GetSaveGamePath</code> method in <code>SaveGameSystem.h</code>. Our goal is to store savegames in <code>GInternalFilePath</code>, so it could look something like this:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">virtual</span> <span class="n">FString</span> <span class="nf">GetSaveGamePath</span><span class="p">(</span><span class="k">const</span> <span class="n">TCHAR</span><span class="o">*</span> <span class="n">Name</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="n">FString</span> <span class="n">SaveDir</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  <span class="cp">#ifdef USE_ANDROID_FILE
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="k">extern</span> <span class="n">FString</span> <span class="n">GInternalFilePath</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  <span class="n">SaveDir</span> <span class="o">=</span> <span class="n">FString</span><span class="o">::</span><span class="n">Printf</span><span class="p">(</span><span class="n">TEXT</span><span class="p">(</span><span class="s">&#34;%s/SaveGames/%s.sav&#34;</span><span class="p">),</span> <span class="o">*</span><span class="n">GInternalFilePath</span><span class="p">,</span> <span class="n">Name</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">  <span class="cp">#else
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="n">SaveDir</span> <span class="o">=</span> <span class="n">FString</span><span class="o">::</span><span class="n">Printf</span><span class="p">(</span><span class="n">TEXT</span><span class="p">(</span><span class="s">&#34;%sSaveGames/%s.sav&#34;</span><span class="p">),</span> <span class="o">*</span><span class="n">FPaths</span><span class="o">::</span><span class="n">ProjectSavedDir</span><span class="p">(),</span> <span class="n">Name</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">  <span class="cp">#endif
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="n">UE_LOG</span><span class="p">(</span><span class="n">LogTemp</span><span class="p">,</span> <span class="n">Warning</span><span class="p">,</span> <span class="n">TEXT</span><span class="p">(</span><span class="s">&#34;Save game path: %s&#34;</span><span class="p">),</span> <span class="o">*</span><span class="n">SaveDir</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">SaveDir</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div>
-<p>And indeed it works! But this way has some drawbacks: it requires modifying the engine, which almost always incurs additional troubles of recompilation, distributing the engine to the rest of the team, and many more. I would prefer to override the default Unreal Engine behavior without modifying the engine code.</p>
-<p>Why doesn&rsquo;t Unreal Engine respect <code>bUseExternalFilesDir</code> in debug building in the first place? Let&rsquo;s find out. In <code>nativeSetGlobalActivity</code> C++ thunk (<code>AndroidJNI.cpp</code>) we can see that <code>GFilePathBase</code> gets reassigned to one of <code>GInternalFilePath</code> or <code>GExternalFilePath</code> depending on whether the build is in shipping or development configuration, but only when <code>bUseExternalFilesDir</code> is <code>true</code>. This parameter comes from a Java call in <code>GameActivity</code>, which in turn reads it from <code>com.epicgames.unreal.GameActivity.bUseExternalFilesDir</code> meta-data in <code>ApplicationInfo</code>. This is an object that stores application meta-data collected from the <code>AndroidManifest.xml</code> <code>&lt;application&gt;</code> tag. This tag gets populated with metadata during the build phase by Unreal Build Tool (UBT). There we can see that <code>MakeApk</code> calls simply ignore the <code>bUseExternalFilesDir</code> setting when <code>bForDistribution</code> is set to <code>false</code>. This is why Unreal Engine tries to store game files in external storage root directory, which isn&rsquo;t a good practice in modern Android.</p>
-<p>UPL (Unreal Plugin Language) comes to the rescue. With UPL we can manipulate <code>AndroidManifest.xml</code> contents and bend the default behavior to our will. Since two <code>meta-data</code> elements inside a single <code>&lt;application&gt;</code> cannot have the same <code>android:name</code> attribute, we must remove <code>meta-data</code> generated by Unreal Engine and add our own with the desired value. Let&rsquo;s try this approach and modify our project&rsquo;s UPL file:</p>
-<pre tabindex="0"><code>&lt;loopElements tag=&#34;meta-data&#34;&gt;
-  &lt;setStringFromAttribute  result=&#34;NameTagValue&#34; tag=&#34;$&#34; name=&#34;android:name&#34;/&gt;
-  &lt;setBoolIsEqual result=&#34;UseExternalFilesDirElement&#34; arg1=&#34;$S(NameTagValue)&#34; arg2=&#34;com.epicgames.unreal.GameActivity.bUseExternalFilesDir&#34;/&gt;
-  &lt;if condition=&#34;UseExternalFilesDirElement&#34;&gt;
-    &lt;true&gt;
-      &lt;removeElement tag=&#34;$&#34;/&gt;
-    &lt;/true&gt;
-  &lt;/if&gt;
-&lt;/loopElements&gt;
-
-&lt;addElements tag=&#34;application&#34;&gt;
-&lt;meta-data android:name=&#34;com.epicgames.unreal.GameActivity.bUseExternalFilesDir&#34; android:value=&#34;true&#34; /&gt;
-&lt;/addElements&gt;
-</code></pre><p>Package the game for Android and check that <code>bUseExternalFilesDir</code> is now <code>true</code> even in debug non-distribution builds. Success! Save games now get saved to internal storage directory and work flawlessly.</p>
-</article>
-
-        </main><footer id="footer">
-    
-</footer>
-</body>
+    <meta http-equiv="refresh" content="0; url=https://rassadin.net/posts/android-external-storage-access/">
+  </head>
 </html>

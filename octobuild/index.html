@@ -1,56 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en-US">
+  <head>
+    <title>https://rassadin.net/posts/octobuild/</title>
+    <link rel="canonical" href="https://rassadin.net/posts/octobuild/">
+    <meta name="robots" content="noindex">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Speed up Unreal Engine compilation by using octobuild compiler cache">
-    
-    <link rel="shortcut icon" href="https://rassadin.net/favicon.ico">
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTS8ZK50NM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-CTS8ZK50NM');
-    </script>
-
-    
-    <link rel="stylesheet" href="/css/style.min.css">
-
-    <link rel="canonical" href="https://rassadin.net/octobuild/" />    
-    <title>Anton Rassadin — Speed up Unreal Engine projects recompilation with octobuild</title>
-</head>
-<body><header id="banner">
-    <h2><a href="https://rassadin.net/">Anton Rassadin</a></h2>
-    <nav>
-        <ul>
-            <li>
-                <a href="/posts/" title="posts">posts</a>
-            </li><li>
-                <a href="/projects/" title="projects">projects</a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main id="content">
-<article>
-    <header id="post-header">
-        <h1>Speed up Unreal Engine projects recompilation with octobuild</h1>
-        <div>
-                <time>November 13, 2024</time>
-            </div>
-    </header><p>Long compilation time is one of the major pain points of C++. Unreal Engine isn&rsquo;t getting any smaller with every update. In fact, the number of compilation targets has doubled in the last several years! Long developer iteration time hinders the project&rsquo;s progress and affects the ability to concentrate.</p>
-<p>Even more, when working in a team, you often need to switch between branches of code many times a day. Every branch switch costs precious time.</p>
-<p>Many of the go-to ways to speed up compilation are already employed in Unreal Engine: precompiled headers, optimized include usages aka Include What You Use, parallel compilation, unity builds, and modules, to name a few. However, there&rsquo;s one more way to improve the speed even more: compiler cache.</p>
-<h3 id="use-octobuild">Use octobuild</h3>
-<p>Today I would like to tell you about Marat Radchenko&rsquo;s <a href="https://github.com/octobuild/octobuild">octobuild</a>. Octobuild works by caching intermediate compilation files, allowing Unreal Engine to simply read the files from disk cache instead of fully recompiling the files the second time you need them. It allows superfast branch switching and almost effortless engine recompilation. Benchmarks show the reduction of compilation times by 60% to 90%.</p>
-<p>With octobuild there&rsquo;s no more hesitation in experimenting with the engine; switching to a teammate&rsquo;s branch just to check out the blueprints is a breeze. I cannot recommend octobuild enough as it has saved me tens of hours (and counting) already!</p>
-<p>The setup is easy: you just install octobuild from a package manager (or build it from source) and that&rsquo;s it. octobuild hooks up to the Unreal Engine build system by the means of <code>xgConsole</code> Incredibuild&rsquo;y executable and starts caching compilation modules right away.</p>
-</article>
-
-        </main><footer id="footer">
-    
-</footer>
-</body>
+    <meta http-equiv="refresh" content="0; url=https://rassadin.net/posts/octobuild/">
+  </head>
 </html>
